@@ -1,0 +1,10 @@
+package-lock.json
+
+
+# frontend
+frontend/node_modules
+frontend/eslint.config.mjs
+frontend/next-env.d.ts
+frontend/next.config.ts
+frontend/package.json
+frontend/tsconfig.json
