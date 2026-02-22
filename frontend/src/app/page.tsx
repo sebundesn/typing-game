@@ -36,7 +36,7 @@ export default function Home() {
     setResult("");
   };
 
-  useEffect(() => { fetchQuestion()}, []);
+  useEffect(() => {fetchQuestion()}, []);
 
   const handleChange = (value: string) => {
     if(!question) return;
@@ -62,47 +62,40 @@ export default function Home() {
   };
 
   return (
-    <main style={{ paddingTop: 120, display: "flex", flexDirection: "column",
+    <main style={{display: "flex", flexDirection: "column",
       alignItems: "center",  justifyContent: "center", minHeight: "100vh",
       textAlign: "center"
     }}>
 
-      <header style={{position: "fixed", top: 0, width: "100%", backgroundColor: "#bde2ec",
-        borderBottom: "1px solid #a4a1a1", zIndex: 1000, padding: "20px 0",
-      }}>
-        <h1 style={{fontSize: 50, margin: 0}}>
-          typing game
-        </h1>
-      </header>
+      <h1 style={{fontSize: 50, marginBottom: 50}}>typing game</h1>
 
       {question && (
         <>
           <h2 style={{marginBottom: 40, fontSize: 50}}>{question.text}</h2>
 
-          <div style={{ position: 'relative', display: 'inline-block', width: "100%", maxWidth: 400 }}>
+          <div style={{ position: 'relative', width: "100%", maxWidth: 400 }}>
     
-            <div style={{
-              position: 'absolute', top: -15, width: '100%',
-              height: '100%', padding: "12px 20px",
-              fontSize: 40, color: '#ccc', pointerEvents: 'none',
-              textAlign: 'center', zIndex: 1, display: 'flex',
-              alignItems: 'center', justifyContent: 'center',
-              whiteSpace: 'pre'
+            <div style={{position: 'absolute', top: 10, fontSize: 40,
+              pointerEvents: 'none', textAlign: 'center', width: "100%", whiteSpace: "nowrap"
             }}>
-
-              <span style={{ color: 'transparent' }}>{input}</span>
-              {question.answer.slice(input.length)}
+              <span style={{ color: "#000" }}>
+                {question.answer.slice(0, input.length)}
+              </span>
+              <span style={{color: "#bbb"}}>
+                {question.answer.slice(input.length)}
+              </span>
             </div>
 
             <input
+              type="password"
+              autoComplete="off"
               autoFocus
               value={input}
               onChange={(e) => handleChange(e.target.value)}
               style={{ 
-                position: 'relative', fontSize: 40, padding: "12px 20px", 
-                borderRadius: 8, border: result === " " ? "3px solid #ff4d4d" : "2px solid #ccc",
-                backgroundColor: "transparent", zIndex: 2, width: "100%", 
-                textAlign: "center", outline: "none",  color: "black"
+                padding: "30px 20px", color: "transparent",
+                borderRadius: 8, border: result === " " ? "3px solid #ff4d4d" : "2px solid black",
+                background: "transparent", width: "100%", outline: "none"
               }}
             />
           </div>
