@@ -1,6 +1,6 @@
 "use client";
 
-import {useState, useEffect} from "react";
+import {useState, useRef, useEffect} from "react";
 
 type Question = {
   text: string;
@@ -12,6 +12,22 @@ export default function Home() {
   const [result, setResult] = useState("");
   const [input, setInput] = useState("");
 
+  const typeSound = useRef<HTMLAudioElement | null>(null);
+  const missSound = useRef<HTMLAudioElement | null>(null);
+  const correctSound = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    typeSound.current = new Audio("/sounds/type.mp3");
+    missSound.current = new Audio("/sounds/miss.mp3");
+    correctSound.current = new Audio("/sounds/correct.mp3");
+  }, []);
+
+  const playSound = (audioRef: React.RefObject<HTMLAudioElement | null>) => {
+    if(!audioRef.current) return;
+    audioRef.current.currentTime = 0;
+    audioRef.current.play().catch(() => {})
+  };
+
   const fetchQuestion = async () => {
     const res = await fetch("http://localhost:8080/api/question");
     const data = await res.json();
@@ -22,15 +38,26 @@ export default function Home() {
 
   useEffect(() => { fetchQuestion()}, []);
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if(e.key === "Enter"){
-      if(input === question?.answer){
+  const handleChange = (value: string) => {
+    if(!question) return;
+
+    const correctPrefix = question.answer.slice(0, value.length);
+
+    if(value === correctPrefix){
+      playSound(typeSound);
+      setInput(value);
+      setResult("");
+    }else{
+      setResult(" ");
+      playSound(missSound);
+    }
+
+    if(value === question.answer){
+      playSound(correctSound);
+      setResult("CLEAR! ✨");
+      setTimeout(() => {
         fetchQuestion();
-        setResult("");
-      }else{
-        setResult("❌ Wrong! Try again");
-        setInput("");
-    };
+      }, 300);
     }
   };
 
@@ -52,16 +79,35 @@ export default function Home() {
         <>
           <h2 style={{marginBottom: 40, fontSize: 50}}>{question.text}</h2>
 
-          <input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={question.answer}
-            style={{fontSize: 40, padding: "12px 20px", borderRadius: 8,
-              border: "2px solid #ccc", width: "100%", maxWidth: 400, textAlign: "center"
-            }}/>
+          <div style={{ position: 'relative', display: 'inline-block', width: "100%", maxWidth: 400 }}>
+    
+            <div style={{
+              position: 'absolute', top: -15, width: '100%',
+              height: '100%', padding: "12px 20px",
+              fontSize: 40, color: '#ccc', pointerEvents: 'none',
+              textAlign: 'center', zIndex: 1, display: 'flex',
+              alignItems: 'center', justifyContent: 'center',
+              whiteSpace: 'pre'
+            }}>
 
-          <p style={{marginTop: 20, fontSize: 20, fontWeight: "bold"}}>{result}</p>
+              <span style={{ color: 'transparent' }}>{input}</span>
+              {question.answer.slice(input.length)}
+            </div>
+
+            <input
+              autoFocus
+              value={input}
+              onChange={(e) => handleChange(e.target.value)}
+              style={{ 
+                position: 'relative', fontSize: 40, padding: "12px 20px", 
+                borderRadius: 8, border: result === " " ? "3px solid #ff4d4d" : "2px solid #ccc",
+                backgroundColor: "transparent", zIndex: 2, width: "100%", 
+                textAlign: "center", outline: "none",  color: "black"
+              }}
+            />
+          </div>
+
+          <p style={{marginTop: 50, fontSize: 20, fontWeight: "bold"}}>{result}</p>
         </>
       )}
     </main>
