@@ -31,25 +31,45 @@ export default function Home() {
   };
 
   return (
-    <main style={{ padding: 40}}>
-      <h1 style={{fontSize: 50}} >typing game MVP</h1>
+    <main style={{ paddingTop: 120, display: "flex", flexDirection: "column",
+      alignItems: "center",  justifyContent: "center", minHeight: "100vh",
+      textAlign: "center"
+    }}>
+
+      <header style={{position: "fixed", top: 0, width: "100%", backgroundColor: "#bde2ec",
+        borderBottom: "1px solid #a4a1a1", zIndex: 1000, padding: "20px 0",
+      }}>
+        <h1 style={{fontSize: 50, margin: 0}}>
+          typing game
+        </h1>
+      </header>
 
       {question && (
         <>
-          <h2>{question.text}</h2>
+          <h2 style={{marginBottom: 40, fontSize: 50}}>{question.text}</h2>
 
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            style={{fontSize: 20, padding: 8}}
-          />
+            placeholder={question.answer}
+            style={{fontSize: 40, padding: "12px 20px", borderRadius: 8,
+              border: "2px solid #ccc", width: "100%", maxWidth: 400, textAlign: "center"
+            }}/>
 
-          <div style={{marginTop: 20}}>
-            <button onClick={checkAnswer}>Check</button>
-            <button onClick={fetchQuestion} style={{marginLeft: 10}}>Next</button>
+          <div style={{marginTop: 30}}>
+            <button onClick={checkAnswer}
+              style={{padding: "10px 20px", fontSize: 18, cursor: "pointer"}}
+            >
+              Check
+            </button>
+            <button onClick={fetchQuestion} style={{marginLeft: 15, 
+              padding: '10px 20px',  fontSize: 18, cursor: 'pointer'}}
+            >
+              Next
+            </button>
           </div>
 
-          <p>{result}</p>
+          <p style={{marginTop: 20, fontSize: 20, fontWeight: "bold"}}>{result}</p>
         </>
       )}
     </main>
