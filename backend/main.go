@@ -17,10 +17,27 @@ var questions = []Question{
 	{"next js typing", "next js typing"},
 }
 
+// CORS(Cross-Origin Resource Sharing)
+func enableCORS(w http.ResponseWriter) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT DELETE OPTIONS")
+	w.Header().Set("Access-Control-Allow-Origiin", "Content-Type")
+}
+
 func getQuestion(w http.ResponseWriter, r *http.Request) {
-	q := questions[0]
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(q)
+	enableCORS(w)
+
+	//preflight 対応
+	if r.Method == http.MethodOptions {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	if r.Method == http.MethodGet {
+		q := questions[0]
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(q)
+	}
 }
 
 func main() {

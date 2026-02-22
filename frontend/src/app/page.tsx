@@ -32,7 +32,7 @@ export default function Home() {
 
   return (
     <main style={{ padding: 40}}>
-      <h1>typing game MVP</h1>
+      <h1 style={{fontSize: 50}} >typing game MVP</h1>
 
       {question && (
         <>
