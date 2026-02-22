@@ -22,12 +22,16 @@ export default function Home() {
 
   useEffect(() => { fetchQuestion()}, []);
 
-  const checkAnswer = () => {
-    if(input === question?.answer){
-      setResult("✅ Correct!");
-    }else{
-      setResult("❌ Wrong");
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if(e.key === "Enter"){
+      if(input === question?.answer){
+        fetchQuestion();
+        setResult("");
+      }else{
+        setResult("❌ Wrong! Try again");
+        setInput("");
     };
+    }
   };
 
   return (
@@ -51,23 +55,11 @@ export default function Home() {
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder={question.answer}
             style={{fontSize: 40, padding: "12px 20px", borderRadius: 8,
               border: "2px solid #ccc", width: "100%", maxWidth: 400, textAlign: "center"
             }}/>
-
-          <div style={{marginTop: 30}}>
-            <button onClick={checkAnswer}
-              style={{padding: "10px 20px", fontSize: 18, cursor: "pointer"}}
-            >
-              Check
-            </button>
-            <button onClick={fetchQuestion} style={{marginLeft: 15, 
-              padding: '10px 20px',  fontSize: 18, cursor: 'pointer'}}
-            >
-              Next
-            </button>
-          </div>
 
           <p style={{marginTop: 20, fontSize: 20, fontWeight: "bold"}}>{result}</p>
         </>
