@@ -3,8 +3,14 @@ package main
 import (
 	"encoding/json"
 	"log"
+	"math/rand"
 	"net/http"
 )
+
+//プロジェクト開始時: go mod init (プロジェクト名)
+//新しいライブラリを import した時: go mod tidy
+//他人のプロジェクトを clone した時: go mod tidy または go mod download
+//git clone [url]
 
 type Question struct {
 	Text   string `json:"text"`
@@ -34,7 +40,8 @@ func getQuestion(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == http.MethodGet {
-		q := questions[0]
+		index := rand.Intn(len(questions))
+		q := questions[index]
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(q)
 	}
@@ -42,6 +49,6 @@ func getQuestion(w http.ResponseWriter, r *http.Request) {
 
 func main() {
 	http.HandleFunc("/api/question", getQuestion)
-	log.Println("Server running on :8080")
+	log.Println("Server running on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
