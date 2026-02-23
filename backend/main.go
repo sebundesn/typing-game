@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/json"
 	"log"
-	"math/rand"
 	"net/http"
 )
 
@@ -13,14 +12,9 @@ import (
 //git clone [url]
 
 type Question struct {
-	Text   string `json:"text"`
-	Answer string `json:"answer"`
-}
-
-var questions = []Question{
-	{"hello world", "hello world"},
-	{"golang is fun", "golang is fun"},
-	{"next js typing", "next js typing"},
+	ID     int
+	Text   string
+	Answer string
 }
 
 // CORS(Cross-Origin Resource Sharing)
@@ -40,14 +34,34 @@ func getQuestion(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if r.Method == http.MethodGet {
-		index := rand.Intn(len(questions))
-		q := questions[index]
+		ctx := r.Context()
+
+		var question Question
+
+		err := db.QueryRow(ctx, `
+			SELECT id, text, answer 
+			FROM questions
+			ORDER BY RANDOM()
+			LIMIT 1
+		`).Scan(&question.ID, &question.Text, &question.Answer)
+
+		if err != nil {
+			http.Error(w, err.Error(), 500)
+			return
+		}
+
 		w.Header().Set("Content-Type", "application/json")
-		json.NewEncoder(w).Encode(q)
+		json.NewEncoder(w).Encode(question)
+	} else {
+		http.Error(w, "Method not Allowed", http.StatusMethodNotAllowed)
+		return
 	}
+
 }
 
 func main() {
+	initDB()
+
 	http.HandleFunc("/api/question", getQuestion)
 	log.Println("Server running on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
